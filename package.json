@@ -9,6 +9,8 @@
   "author": "panlw@yeah.net",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.4.7",
+    "mongoose": "^4.8.4",
     "mysql": "^2.13.0",
     "mysql2": "^1.2.0"
   },
