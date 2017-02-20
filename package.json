@@ -1,0 +1,49 @@
+{
+  "name": "using-db",
+  "version": "1.0.0",
+  "description": "Using mysql2, mongoose, etc.",
+  "main": "test.js",
+  "scripts": {
+    "test": "ava -v"
+  },
+  "author": "panlw@yeah.net",
+  "license": "MIT",
+  "dependencies": {
+    "mysql": "^2.13.0",
+    "mysql2": "^1.2.0"
+  },
+  "devDependencies": {
+    "ava": "^0.18.2",
+    "babel-preset-es2015": "^6.22.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/panlw/using-db.git"
+  },
+  "keywords": [
+    "ava",
+    "mysql",
+    "babel",
+    "es2015"
+  ],
+  "bugs": {
+    "url": "https://github.com/panlw/using-db/issues"
+  },
+  "homepage": "https://github.com/panlw/using-db#readme",
+  "ava": {
+    "files": [
+      "src/**/__tests__/*-test.js"
+    ],
+    "babel": "inherit",
+    "require": [
+      "./test/helpers/setup-test-env.js"
+    ],
+    "tap": false,
+    "failFast": true,
+    "powerAssert": true,
+    "concurrency": 2
+  }
+}
