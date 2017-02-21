@@ -36,11 +36,15 @@ let userSchema = new Schema({
   // 头像(base64)
   avator: String
 })
-
+userSchema.virtual('typeName').get(function () {
+  return USER_TYPES[this.type]
+})
 userSchema.methods.desc = function () {
-  return `[${this.type}] ${this.name} - ${this._id}`
+  return `[${this.typeName}] ${this.name} (${this._id})`
 }
-
+userSchema.statics.toDesc = function (users) {
+  return users.map(user => user.desc())
+}
 const User = mongoose.model('User', userSchema)
 
 /**
@@ -77,6 +81,7 @@ const removeUsers = (ids) => {
 }
 
 export default {
+  User,
   auth,
   contacts,
   createUsers,

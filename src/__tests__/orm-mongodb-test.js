@@ -6,9 +6,7 @@ import orm from '../orm-mongodb'
 
 test('[PASS] auth', t => {
   return orm.auth('c1')
-    .then((user) => {
-      t.is(user._id, 'c1')
-    })
+    .then(user => t.is(user._id, 'c1'))
 })
 
 test('[PASS] create/remove users', t => {
@@ -18,12 +16,13 @@ test('[PASS] create/remove users', t => {
   ]
   const userIds = users.map((user) => user._id);
   return orm.removeUsers(userIds) // set-up
-    .then((res) => orm.createUsers(users))
+    .then(res => orm.createUsers(users))
     .then((users) => {
-      console.log('[DB] description of users:', users.map((user) => user.desc()))
-      return orm.removeUsers(userIds)
-    }) // tear-down
-    .then((res) => {
+      console.log('[DB] description of users:', orm.User.toDesc(users)) // use static methods
+      return users
+    })
+    .then(users => orm.removeUsers(userIds)) // tear-down
+    .then(res => {
       console.log('[DB] ', res.result)
       t.is(res.result.n, users.length)
     })
@@ -34,12 +33,10 @@ test('[FAIL] create user fail if required property is not assigned', t => {
     {_id: 'foo.bar', name: 'Foo Bar'}
   ]
   return orm.createUsers(users)
-    .catch((err) => t.is(err.toString(), 'ValidationError: 属性 type 是必须的。'))
+    .catch(err => t.is(err.toString(), 'ValidationError: 属性 type 是必须的。'))
 })
 
 test('[PASS] contacts', t => {
   return orm.contacts()
-    .then((contacts) => {
-      t.true(contacts.length > 0)
-    })
+    .then(contacts => t.true(contacts.length > 0))
 })
