@@ -46,6 +46,6 @@
     "tap": false,
     "failFast": true,
     "powerAssert": true,
-    "concurrency": 2
+    "concurrency": 1
   }
 }

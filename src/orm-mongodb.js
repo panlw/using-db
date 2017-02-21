@@ -1,40 +1,47 @@
 import mongoose from 'mongoose'
 import Promise from 'bluebird'
-
 mongoose.Promise = Promise
+
+// https://github.com/Automattic/mongoose/blob/master/lib/error/messages.js
+mongoose.Error.messages.general.required = '属性 {PATH} 是必须的。'
+
+// create connection
 mongoose.connect('mongodb://localhost/rep', {user: 'rep', pass: 'Rep.1234'})
 
 const Schema = mongoose.Schema
 
-const UserSchema = new Schema({
-  /**
-   * 用户ID
-   */
+const USER_TYPES = {
+  'A': '管理员',
+  'S': '客服',
+  'C': '顾客'
+}
+
+let userSchema = new Schema({
+  // 用户ID
   _id: {
     type: String,
     required: true
   },
-  /**
-   * 用户类型：A=管理员 S=客服 C=顾客
-   */
+  // 用户类型
   type: {
     type: String,
-    required: true
+    required: true,
+    enum: Object.getOwnPropertyNames(USER_TYPES)
   },
-  /**
-   * 用户名
-   */
+  // 用户名
   name: {
     type: String,
     required: true
   },
-  /**
-   * 头像(base64)
-   */
+  // 头像(base64)
   avator: String
 })
 
-const User = mongoose.model('User', UserSchema)
+userSchema.methods.desc = function () {
+  return `[${this.type}] ${this.name} - ${this._id}`
+}
+
+const User = mongoose.model('User', userSchema)
 
 /**
  * Authentication.
@@ -44,13 +51,11 @@ const User = mongoose.model('User', UserSchema)
 const auth = (uid /*, ticket*/ ) => {
   return User
     .findById(uid)
-    .exec().then(function(profile) {
+    .then((user) => {
       //TODO authehticated with ticket by auth-server
-      if (!profile) {
-        throw new Error('Authentication Error');
-      }
-      return profile.toObject();
-    });
+      if (!user) throw new Error('Authentication Error')
+      return user
+    })
 }
 
 /**
@@ -61,15 +66,19 @@ const contacts = () => {
   return User
     .find()
     .select('type name avator')
-    .exec()
-    .then(function(rows) {
-      return rows.map(function(row) {
-        return row.toObject();
-      });
-    });
+}
+
+const createUsers = (users) => {
+  return User.create(users)
+}
+
+const removeUsers = (ids) => {
+  return User.remove({ _id: { $in: ids } }).exec()
 }
 
 export default {
   auth,
-  contacts
+  contacts,
+  createUsers,
+  removeUsers
 }
